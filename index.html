@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Razorpay Money — Research Insights</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=TASA+Orbiter+Display:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0A0E1A;
+    --bg-elevated: #0F1424;
+    --surface: #151A2E;
+    --surface-hover: #1A2038;
+    --text: #F0F2F8;
+    --text-secondary: #A0A8C0;
+    --text-tertiary: #5C6480;
+    --border: #1E2540;
+    --border-light: #1A203A;
+    --rzp-blue: #528FF0;
+    --rzp-blue-bright: #6CA3FF;
+    --rzp-blue-dim: #3A6FCC;
+    --alchemist: #A78BFA;
+    --alchemist-bg: rgba(167,139,250,0.08);
+    --migrator: #60A5FA;
+    --migrator-bg: rgba(96,165,250,0.08);
+    --newcomer: #34D399;
+    --newcomer-bg: rgba(52,211,153,0.08);
+    --settled: #64748B;
+    --settled-bg: rgba(100,116,139,0.08);
+    --high: #34D399;
+    --moderate-high: #5DE8B8;
+    --moderate: #FBBF24;
+    --quote-bg: #111728;
+    --nav-bg: rgba(10,14,26,0.88);
+    --glow-blue: rgba(82,143,240,0.15);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; font-size:16px; }
+  body {
+    font-family:'Inter',-apple-system,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- NAV ---- */
+  nav { position:sticky; top:0; z-index:100; background:var(--nav-bg); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:0 2rem; transition:box-shadow .3s; }
+  nav.scrolled { box-shadow:0 2px 24px rgba(0,0,0,.4); }
+  .nav-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:56px; }
+  .nav-brand { display:flex; align-items:center; }
+  .nav-brand svg { height:20px; width:auto; }
+  .nav-links { display:flex; gap:1.5rem; }
+  .nav-links a { font-size:.82rem; font-weight:500; color:var(--text-tertiary); text-decoration:none; transition:color .2s; position:relative; }
+  .nav-links a:hover { color:var(--text-secondary); }
+  .nav-links a.active { color:var(--rzp-blue-bright); }
+  .nav-links a.active::after { content:''; position:absolute; bottom:-17px; left:0; right:0; height:2px; background:var(--rzp-blue); border-radius:1px; }
+
+  /* ---- HERO ---- */
+  .hero { max-width:1100px; margin:0 auto; padding:5rem 2rem 2rem; position:relative; }
+  .hero::before { content:''; position:absolute; top:-60px; left:-200px; width:600px; height:600px; background:radial-gradient(circle,var(--glow-blue) 0%,transparent 70%); pointer-events:none; z-index:-1; }
+  .hero h1 {
+    font-family:'TASA Orbiter Display','Inter',sans-serif;
+    font-size:3.2rem; font-weight:700; line-height:1.15; margin-bottom:1rem; letter-spacing:-.03em;
+    background:linear-gradient(135deg,var(--text) 0%,var(--rzp-blue-bright) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .hero .subtitle { font-size:1.15rem; color:var(--text-secondary); max-width:600px; line-height:1.65; }
+
+  /* ---- RESEARCH OVERVIEW (two columns) ---- */
+  .research-overview {
+    max-width:1100px; margin:0 auto; padding:2rem 2rem 3rem;
+    display:grid; grid-template-columns:1.8fr 1fr; gap:1.25rem;
+  }
+  .ro-panel {
+    background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1.5rem 1.75rem;
+  }
+  .ro-label {
+    font-size:.65rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--rzp-blue); margin-bottom:1rem; display:flex; align-items:center; gap:.5rem;
+  }
+  .ro-label .ro-badge {
+    background:rgba(82,143,240,.12); color:var(--rzp-blue-bright);
+    font-size:.6rem; padding:.15rem .5rem; border-radius:100px; font-weight:600;
+  }
+
+  /* Funnel steps */
+  .funnel-row { display:flex; align-items:stretch; gap:0; }
+  .funnel-step {
+    flex:1; padding:1rem .75rem; position:relative;
+    border-right:1px solid var(--border); text-align:center;
+  }
+  .funnel-step:last-child { border-right:none; }
+  .funnel-step .f-num {
+    font-family:'TASA Orbiter Display','Inter',sans-serif;
+    font-size:1.8rem; font-weight:700; line-height:1; margin-bottom:.2rem;
+  }
+  .funnel-step .f-label { font-size:.78rem; color:var(--text-secondary); line-height:1.3; }
+  .funnel-step .f-sub { font-size:.65rem; color:var(--text-tertiary); margin-top:.25rem; }
+  .funnel-step:nth-child(1) .f-num { color:var(--text-tertiary); }
+  .funnel-step:nth-child(2) .f-num { color:var(--rzp-blue-bright); }
+  .funnel-step:nth-child(3) .f-num { color:var(--moderate); }
+  .funnel-step:nth-child(4) .f-num { color:var(--high); }
+  .funnel-step:not(:last-child)::after {
+    content:'\203A'; position:absolute; right:-7px; top:50%; transform:translateY(-50%);
+    font-size:1.1rem; color:var(--text-tertiary); z-index:1;
+    background:var(--surface); width:14px; text-align:center; line-height:14px;
+  }
+
+  /* Qual panel */
+  .qual-panel { display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+  .qual-big {
+    font-family:'TASA Orbiter Display','Inter',sans-serif;
+    font-size:1.8rem; font-weight:700; color:var(--rzp-blue-bright); line-height:1;
+  }
+  .qual-label { font-size:.78rem; color:var(--text-secondary); margin-top:.25rem; margin-bottom:.5rem; }
+  .qual-note {
+    position:relative; display:inline-block; cursor:help;
+    font-size:.65rem; color:var(--text-tertiary);
+    border-bottom:1px dashed var(--text-tertiary); padding-bottom:1px;
+  }
+  .qual-note .tooltip {
+    visibility:hidden; opacity:0;
+    position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%);
+    background:#1E2540; border:1px solid var(--border); border-radius:10px;
+    padding:.75rem 1rem; width:260px;
+    font-size:.78rem; color:var(--text-secondary); line-height:1.5; text-align:left;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    transition:opacity .2s, visibility .2s;
+    z-index:10;
+  }
+  .qual-note .tooltip::after {
+    content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border:6px solid transparent; border-top-color:#1E2540;
+  }
+  .qual-note:hover .tooltip { visibility:visible; opacity:1; }
+
+  /* ---- SECTIONS ---- */
+  section { max-width:1100px; margin:0 auto; padding:3.5rem 2rem; }
+  .section-label { font-size:.7rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--rzp-blue); margin-bottom:.75rem; }
+  .section-title { font-family:'TASA Orbiter Display','Inter',sans-serif; font-size:2rem; font-weight:700; margin-bottom:.5rem; letter-spacing:-.02em; }
+  .section-subtitle { font-size:1rem; color:var(--text-secondary); margin-bottom:2.5rem; max-width:650px; line-height:1.65; }
+  .divider { max-width:1100px; margin:0 auto; padding:0 2rem; }
+  .divider hr { border:none; border-top:1px solid var(--border); }
+
+  /* ---- ICP CARDS (redesigned) ---- */
+  .icp-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:1.25rem; }
+  .icp-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    overflow:hidden; transition:transform .25s, box-shadow .25s, border-color .25s;
+  }
+  .icp-card:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,.3); }
+  .icp-card::before { content:''; display:block; height:2px; }
+  .icp-card.alchemist::before { background:linear-gradient(90deg,var(--alchemist),#C4B5FD); }
+  .icp-card.alchemist:hover { border-color:rgba(167,139,250,.3); }
+  .icp-card.migrator::before { background:linear-gradient(90deg,var(--migrator),#93C5FD); }
+  .icp-card.migrator:hover { border-color:rgba(96,165,250,.3); }
+  .icp-card.newcomer::before { background:linear-gradient(90deg,var(--newcomer),#6EE7B7); }
+  .icp-card.newcomer:hover { border-color:rgba(52,211,153,.3); }
+  .icp-card.settled::before { background:linear-gradient(90deg,var(--settled),#94A3B8); }
+  .icp-card.settled:hover { border-color:rgba(100,116,139,.3); }
+
+  /* Card top (always visible) */
+  .icp-top { padding:1.5rem 1.75rem 1.25rem; }
+  .icp-tag { font-size:.62rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.4rem; }
+  .icp-card.alchemist .icp-tag { color:var(--alchemist); }
+  .icp-card.migrator .icp-tag { color:var(--migrator); }
+  .icp-card.newcomer .icp-tag { color:var(--newcomer); }
+  .icp-card.settled .icp-tag { color:var(--settled); }
+
+  .icp-card h3 {
+    font-family:'TASA Orbiter Display','Inter',sans-serif;
+    font-size:1.35rem; font-weight:700; margin-bottom:.75rem; color:var(--text);
+  }
+
+  .icp-bullets {
+    list-style:none; padding:0; margin:0 0 1rem;
+  }
+  .icp-bullets li {
+    font-size:.85rem; color:var(--text-secondary); line-height:1.5;
+    padding:.25rem 0 .25rem 1rem; position:relative;
+  }
+  .icp-bullets li::before {
+    content:''; position:absolute; left:0; top:.65rem;
+    width:4px; height:4px; border-radius:50%; background:var(--text-tertiary);
+  }
+
+  /* Voice quote */
+  .voice-quote {
+    padding:.75rem 1rem; background:var(--quote-bg); border-radius:10px;
+    border-left:2px solid var(--border);
+    font-style:italic; font-size:.88rem; color:var(--text); line-height:1.55;
+  }
+  .icp-card.alchemist .voice-quote { border-left-color:var(--alchemist); }
+  .icp-card.migrator .voice-quote { border-left-color:var(--migrator); }
+  .icp-card.newcomer .voice-quote { border-left-color:var(--newcomer); }
+  .icp-card.settled .voice-quote { border-left-color:var(--settled); }
+  .voice-label {
+    font-size:.6rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--text-tertiary); margin-bottom:.3rem;
+  }
+
+  /* Card accordion */
+  .icp-accordion-toggle {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.75rem 1.75rem; cursor:pointer;
+    border-top:1px solid var(--border); font-size:.78rem; font-weight:500;
+    color:var(--text-tertiary); transition:color .2s, background .2s;
+    user-select:none;
+  }
+  .icp-accordion-toggle:hover { color:var(--text-secondary); background:var(--surface-hover); }
+  .icp-accordion-toggle .icp-chev {
+    transition:transform .3s; font-size:.85rem;
+  }
+  .icp-card.open .icp-chev { transform:rotate(180deg); }
+
+  .icp-accordion {
+    max-height:0; overflow:hidden; transition:max-height .4s ease;
+  }
+  .icp-card.open .icp-accordion { max-height:800px; }
+  .icp-accordion-inner {
+    padding:0 1.75rem 1.5rem; border-top:1px solid var(--border);
+  }
+
+  /* Blocker quote inside accordion */
+  .blocker-quote {
+    margin-top:1rem; padding:.75rem 1rem;
+    background:rgba(239,68,68,.04); border:1px solid rgba(239,68,68,.12);
+    border-radius:10px; font-style:italic; font-size:.85rem; color:#FCA5A5; line-height:1.55;
+  }
+  .blocker-label {
+    font-size:.6rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:#F87171; margin-bottom:.25rem;
+  }
+
+  /* Accordion sections */
+  .acc-section { margin-top:1rem; }
+  .acc-section h4 {
+    font-size:.68rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--text-tertiary); margin-bottom:.4rem;
+  }
+  .acc-section p { font-size:.85rem; color:var(--text-secondary); line-height:1.6; }
+
+  .icp-stats-row {
+    display:flex; gap:.75rem; margin-top:1rem;
+  }
+  .icp-stat {
+    flex:1; text-align:center; padding:.5rem; background:var(--bg); border-radius:8px;
+  }
+  .icp-stat .s-num {
+    font-family:'TASA Orbiter Display','Inter',sans-serif;
+    font-size:1.2rem; font-weight:700; line-height:1;
+  }
+  .icp-card.alchemist .s-num { color:var(--alchemist); }
+  .icp-card.migrator .s-num { color:var(--migrator); }
+  .icp-card.newcomer .s-num { color:var(--newcomer); }
+  .icp-card.settled .s-num { color:var(--settled); }
+  .icp-stat .s-label { font-size:.6rem; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.05em; margin-top:.15rem; }
+
+  /* ---- COLLAPSIBLE INSIGHTS ---- */
+  .insight {
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    margin-bottom:1rem; transition:box-shadow .25s, border-color .25s;
+  }
+  .insight:hover { box-shadow:0 4px 24px rgba(0,0,0,.2); border-color:var(--border-light); }
+  .insight-summary {
+    padding:1.5rem 2rem; cursor:pointer;
+    display:grid; grid-template-columns:1fr auto; gap:1rem; align-items:start; user-select:none;
+    border-radius:14px 14px 0 0;
+  }
+  .insight-summary:hover { background:var(--surface-hover); }
+  .insight-left { min-width:0; }
+  .insight-top-row { display:flex; align-items:center; gap:.75rem; margin-bottom:.4rem; flex-wrap:wrap; }
+  .insight-number {
+    font-family:'TASA Orbiter Display','Inter',sans-serif;
+    font-size:.68rem; font-weight:600; color:var(--rzp-blue); letter-spacing:.1em; text-transform:uppercase;
+  }
+  .confidence-badge { font-size:.68rem; font-weight:600; padding:.2rem .7rem; border-radius:100px; letter-spacing:.02em; position:relative; cursor:help; }
+  .confidence-badge.high { background:rgba(52,211,153,.12); color:var(--high); }
+  .confidence-badge.moderate-high { background:rgba(93,232,184,.1); color:var(--moderate-high); }
+  .confidence-badge.moderate { background:rgba(251,191,36,.12); color:var(--moderate); }
+  .confidence-badge .badge-tip {
+    visibility:hidden; opacity:0;
+    position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%);
+    background:#1E2540; border:1px solid var(--border); border-radius:10px;
+    padding:.6rem .85rem; width:280px;
+    font-size:.72rem; font-weight:400; color:var(--text-secondary); line-height:1.5; text-align:left;
+    letter-spacing:0; text-transform:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    transition:opacity .2s, visibility .2s;
+    z-index:20; pointer-events:none;
+  }
+  .confidence-badge .badge-tip::after {
+    content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border:6px solid transparent; border-top-color:#1E2540;
+  }
+  .confidence-badge:hover .badge-tip { visibility:visible; opacity:1; }
+  .insight-summary h3 {
+    font-family:'TASA Orbiter Display','Inter',sans-serif;
+    font-size:1.15rem; font-weight:600; line-height:1.35; color:var(--text); margin-bottom:.6rem;
+  }
+  .insight-action {
+    background:rgba(82,143,240,.08); border:1px solid rgba(82,143,240,.18);
+    border-radius:10px; padding:.75rem 1rem; font-size:.95rem; line-height:1.55; color:var(--text);
+  }
+  .insight-action strong { color:var(--rzp-blue-bright); font-weight:700; font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; }
+  .insight-chevron {
+    display:flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:8px; background:var(--bg);
+    color:var(--text-tertiary); transition:transform .3s, color .2s; flex-shrink:0; margin-top:.25rem; font-size:1rem;
+  }
+  .insight.open .insight-chevron { transform:rotate(180deg); color:var(--rzp-blue-bright); }
+  .insight-detail { max-height:0; overflow:hidden; transition:max-height .4s ease; }
+  .insight.open .insight-detail { max-height:2000px; }
+  .insight-detail-inner { padding:0 2rem 2rem; border-top:1px solid var(--border); }
+  .evidence-line { font-size:.8rem; color:var(--text-tertiary); margin:1rem 0 .75rem; }
+  .insight-body { font-size:.92rem; color:var(--text-secondary); line-height:1.7; margin-bottom:1rem; }
+  .inline-quote {
+    border-left:2px solid var(--rzp-blue-dim); padding:.75rem 1.25rem; margin:1rem 0;
+    background:var(--quote-bg); border-radius:0 10px 10px 0;
+    font-style:italic; font-size:.92rem; color:var(--text); line-height:1.6;
+  }
+  .brand-table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.82rem; }
+  .brand-table th { text-align:left; font-weight:600; font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); padding:.5rem .75rem; border-bottom:1px solid var(--border); }
+  .brand-table td { padding:.6rem .75rem; border-bottom:1px solid var(--border); vertical-align:top; color:var(--text-secondary); }
+  .brand-table .icp-cell { font-weight:600; white-space:nowrap; }
+
+  /* ---- TABS ---- */
+  .tabs { display:flex; gap:.5rem; margin-bottom:2rem; flex-wrap:wrap; }
+  .tab-btn { padding:.5rem 1.25rem; border:1px solid var(--border); border-radius:100px; background:var(--surface); font-family:'Inter',sans-serif; font-size:.82rem; font-weight:500; color:var(--text-secondary); cursor:pointer; transition:all .2s; }
+  .tab-btn:hover { border-color:var(--text-tertiary); color:var(--text); }
+  .tab-btn.active { background:var(--rzp-blue); color:#fff; border-color:var(--rzp-blue); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  .deep-dive-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:2rem 2.5rem; }
+  .deep-dive-card h3 { font-family:'TASA Orbiter Display','Inter',sans-serif; font-size:1.4rem; font-weight:700; margin-bottom:.25rem; }
+  .deep-dive-card .dd-tagline { font-size:.92rem; color:var(--text-secondary); margin-bottom:1.5rem; font-style:italic; }
+  .dd-section { margin-bottom:1.5rem; }
+  .dd-section h4 { font-size:.7rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:.5rem; }
+  .dd-section p { font-size:.88rem; color:var(--text-secondary); line-height:1.65; }
+  .risk-box { background:rgba(239,68,68,.06); border:1px solid rgba(239,68,68,.15); border-radius:10px; padding:1rem 1.25rem; font-size:.85rem; color:#FCA5A5; line-height:1.6; }
+  .risk-box strong { color:#F87171; }
+
+  /* ---- QUOTE WALL ---- */
+  .filter-chips { display:flex; gap:.5rem; margin-bottom:2rem; flex-wrap:wrap; }
+  .chip { padding:.4rem 1rem; border:1px solid var(--border); border-radius:100px; background:var(--surface); font-family:'Inter',sans-serif; font-size:.75rem; font-weight:500; color:var(--text-secondary); cursor:pointer; transition:all .2s; }
+  .chip:hover { border-color:var(--text-tertiary); color:var(--text); }
+  .chip.active { background:var(--rzp-blue); color:#fff; border-color:var(--rzp-blue); }
+  .quote-grid { columns:3; column-gap:1rem; }
+  .quote-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1rem; break-inside:avoid; transition:transform .25s, box-shadow .25s; position:relative; }
+  .quote-card:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(0,0,0,.25); }
+  .quote-card .quote-mark { font-family:'TASA Orbiter Display',serif; font-size:2.5rem; line-height:1; color:var(--border); margin-bottom:.25rem; opacity:.5; }
+  .quote-card .quote-text { font-style:italic; font-size:.92rem; line-height:1.6; color:var(--text); margin-bottom:1rem; }
+  .quote-card .quote-meta { display:flex; align-items:center; justify-content:space-between; gap:.5rem; flex-wrap:wrap; }
+  .quote-card .quote-source { font-size:.7rem; font-weight:500; color:var(--text-tertiary); }
+  .quote-card .quote-tags { display:flex; gap:.35rem; flex-wrap:wrap; }
+  .qt { font-size:.62rem; font-weight:600; padding:.15rem .5rem; border-radius:100px; letter-spacing:.03em; }
+  .qt.alchemist { background:var(--alchemist-bg); color:var(--alchemist); }
+  .qt.migrator { background:var(--migrator-bg); color:var(--migrator); }
+  .qt.settled { background:var(--settled-bg); color:var(--settled); }
+  .qt.insight-tag { background:rgba(82,143,240,.1); color:var(--rzp-blue-bright); }
+
+  /* ---- PROJECTS ---- */
+  .project-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+  .project-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:1.75rem; transition:transform .25s, box-shadow .25s, border-color .25s;
+    display:flex; flex-direction:column;
+  }
+  .project-card:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,.3); border-color:rgba(82,143,240,.25); }
+  .project-num {
+    font-family:'TASA Orbiter Display','Inter',sans-serif;
+    font-size:.65rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--rzp-blue); margin-bottom:.6rem;
+  }
+  .project-card h3 {
+    font-family:'TASA Orbiter Display','Inter',sans-serif;
+    font-size:1.05rem; font-weight:700; line-height:1.35; color:var(--text); margin-bottom:.75rem;
+  }
+  .project-card .project-hmw {
+    font-size:.85rem; color:var(--text-secondary); line-height:1.6; flex:1;
+  }
+  .project-card .project-tag {
+    margin-top:1rem; font-size:.62rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--rzp-blue-dim); background:rgba(82,143,240,.08); padding:.25rem .65rem;
+    border-radius:100px; display:inline-block; align-self:flex-start;
+  }
+  @media (max-width:900px) {
+    .project-grid { grid-template-columns:1fr; }
+  }
+
+  /* ---- METHODOLOGY ---- */
+  .methodology { background:var(--bg-elevated); border-top:1px solid var(--border); margin-top:2rem; }
+  .meth-inner { max-width:1100px; margin:0 auto; padding:3rem 2rem; }
+  .meth-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:1.5rem; }
+  .meth-item h4 { font-size:.7rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--text-tertiary); margin-bottom:.5rem; }
+  .meth-item p { font-size:.82rem; color:var(--text-secondary); line-height:1.6; }
+  .confidence-legend { display:flex; gap:1.5rem; margin-top:1.5rem; flex-wrap:wrap; }
+  .conf-item { display:flex; align-items:center; gap:.4rem; font-size:.8rem; color:var(--text-secondary); }
+  .conf-dot { width:8px; height:8px; border-radius:50%; }
+  .conf-dot.high { background:var(--high); }
+  .conf-dot.mod-high { background:var(--moderate-high); }
+  .conf-dot.mod { background:var(--moderate); }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width:900px) {
+    .research-overview { grid-template-columns:1fr; }
+    .icp-grid { grid-template-columns:1fr; }
+    .quote-grid { columns:2; }
+    .meth-grid { grid-template-columns:1fr; }
+    .hero h1 { font-size:2.2rem; }
+  }
+  @media (max-width:600px) {
+    .quote-grid { columns:1; }
+    .funnel-row { flex-direction:column; }
+    .funnel-step { border-right:none; border-bottom:1px solid var(--border); }
+    .funnel-step:last-child { border-bottom:none; }
+    .funnel-step::after { display:none; }
+    nav .nav-links { gap:.75rem; }
+    nav .nav-links a { font-size:.72rem; }
+    .hero { padding:3.5rem 1.25rem 2rem; }
+    .hero h1 { font-size:1.8rem; }
+    section { padding:2rem 1.25rem; }
+    .insight-summary { padding:1.25rem; }
+    .insight-detail-inner { padding:0 1.25rem 1.5rem; }
+  }
+
+  .fade-in { opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+  .fade-in.visible { opacity:1; transform:translateY(0); }
+  ::selection { background:rgba(82,143,240,.3); color:#fff; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <div class="nav-brand"><svg width="195" height="32" viewBox="0 0 195 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.06078 9.8005L7 13.5472L13.0717 9.77918L9.10069 23.9968L13.1337 24L19 3" fill="white"/><path d="M185.729 19.9033L190.612 12.5889H194.059L185.634 24.4902C184.906 25.532 184.164 26.3585 183.406 26.9688C182.649 27.5791 181.856 28.0399 181.03 28.3525C180.219 28.6651 179.35 28.8809 178.422 29L178.285 26.4326C179.037 26.2838 179.666 26.1048 180.171 25.8965C180.691 25.6881 181.137 25.4354 181.507 25.1377C181.874 24.8549 182.209 24.4971 182.512 24.0654L183.072 23.3037L181.089 12.5889H184.535L185.729 19.9033ZM150.286 12.2988C151.51 12.2989 152.526 12.5374 153.334 13.0137C154.144 13.4751 154.718 14.1225 155.055 14.9561C155.391 15.7896 155.461 16.7645 155.265 17.8809C155.036 19.1759 154.584 20.2851 153.907 21.208C153.246 22.1309 152.409 22.8455 151.397 23.3516C150.404 23.8427 149.295 24.0878 148.071 24.0879C146.847 24.0879 145.822 23.8579 144.996 23.3965C144.186 22.935 143.612 22.2867 143.275 21.4531C142.939 20.6196 142.87 19.637 143.069 18.5059C143.295 17.2258 143.739 16.124 144.4 15.2012C145.077 14.2784 145.921 13.5637 146.933 13.0576C147.944 12.5516 149.062 12.2988 150.286 12.2988ZM176.023 12.2988C177.157 12.2989 178.081 12.545 178.795 13.0361C179.527 13.5125 179.999 14.2194 180.212 15.1572C180.427 16.08 180.335 17.2037 179.936 18.5283H172.409C172.242 19.5183 172.35 20.2698 172.735 20.7832C173.142 21.3041 173.83 21.5654 174.797 21.5654C175.432 21.5654 176.045 21.4755 176.636 21.2969C177.229 21.1034 177.817 20.8137 178.399 20.4268L178.723 22.7041C178.133 23.1357 177.422 23.4784 176.592 23.7314C175.779 23.9695 174.957 24.0879 174.126 24.0879C172.917 24.0879 171.899 23.8579 171.073 23.3965C170.263 22.935 169.682 22.2867 169.33 21.4531C168.993 20.6196 168.923 19.6446 169.12 18.5283C169.335 17.3078 169.775 16.2288 170.439 15.291C171.119 14.3532 171.943 13.6235 172.911 13.1025C173.882 12.5667 174.92 12.2988 176.023 12.2988ZM165.072 12.2988C166.463 12.2988 167.41 12.7154 167.913 13.5488C168.434 14.3675 168.487 15.5667 168.072 17.1445L166.336 23.9092H162.912L164.621 17.3008C164.831 16.5416 164.812 15.9605 164.565 15.5586C164.334 15.1569 163.886 14.9561 163.221 14.9561C162.45 14.9561 161.804 15.1946 161.281 15.6709C160.774 16.1472 160.42 16.7795 160.221 17.5684L158.581 23.9092H155.158L157.24 15.8271C157.52 14.7554 157.734 13.6755 157.88 12.5889H161.122L160.872 14.1855C161.304 13.6649 161.844 13.2361 162.495 12.9014C163.276 12.4996 164.135 12.2989 165.072 12.2988ZM133.04 19.8037L141.24 8.01074H144.029L139.979 23.9082H136.85L139.048 15.3398L133.132 23.9082H130.842L129.297 15.3633L127.123 23.9082H124.018L128.067 8.01074H130.856L133.04 19.8037ZM149.855 14.8662C149.221 14.8662 148.669 15.0375 148.2 15.3799C147.734 15.7073 147.354 16.1542 147.058 16.7197C146.776 17.2854 146.577 17.9034 146.459 18.5732C146.283 19.5705 146.364 20.3144 146.7 20.8057C147.037 21.2969 147.636 21.543 148.497 21.543C149.132 21.543 149.674 21.3791 150.125 21.0518C150.593 20.7094 150.969 20.2551 151.25 19.6895C151.549 19.1091 151.758 18.4765 151.879 17.792C152.05 16.8244 151.966 16.0947 151.63 15.6035C151.293 15.1124 150.702 14.8662 149.855 14.8662ZM175.742 14.666C174.896 14.666 174.184 14.9707 173.607 15.5811C173.309 15.8989 173.06 16.3237 172.854 16.8535H177.452C177.565 16.1974 177.487 15.6842 177.215 15.3135C176.913 14.8819 176.422 14.6661 175.742 14.666Z" fill="white"/><path d="M1.67794 17.9446L0.0527344 23.8655H8.09555L11.3866 11.8207L1.67794 17.9446ZM29.6158 12.7318C29.4192 13.4456 29.0404 13.97 28.4755 14.3048C27.912 14.639 27.121 14.8068 26.1 14.8068H22.8561L23.9951 10.6581H27.2389C28.2586 10.6581 28.9592 10.8245 29.3393 11.1638C29.7193 11.5032 29.8111 12.0218 29.6158 12.7388V12.7318ZM32.9744 12.6492C33.3872 11.151 33.2168 9.99862 32.4619 9.19192C31.7083 8.39163 30.3858 7.98828 28.4985 7.98828H21.2591L16.9012 23.8725H20.4183L22.1746 17.4702H24.4813C24.999 17.4702 25.4066 17.5534 25.7042 17.7135C26.0023 17.8799 26.1773 18.168 26.231 18.5842L26.8588 23.8725H30.627L30.0162 18.9427C29.8917 17.8415 29.376 17.1949 28.4696 17.0028C29.625 16.6763 30.5929 16.1321 31.3727 15.3766C32.1471 14.6267 32.7004 13.6867 32.9744 12.6556V12.6492ZM41.5237 18.1872C41.2288 19.2628 40.7767 20.0759 40.1652 20.6457C39.5532 21.2155 38.8218 21.4972 37.9686 21.4972C37.0996 21.4972 36.5105 21.2219 36.1992 20.6649C35.8873 20.1079 35.8768 19.3012 36.1664 18.2449C36.4561 17.1885 36.9181 16.3626 37.5538 15.7671C38.1894 15.1717 38.9326 14.874 39.7858 14.874C40.6377 14.874 41.221 15.1621 41.5159 15.7338C41.8173 16.3081 41.8239 17.1296 41.529 18.1988L41.5237 18.1872ZM43.0651 12.566L42.6247 14.173C42.4346 13.5967 42.0657 13.1358 41.5205 12.79C40.9739 12.4507 40.2976 12.2779 39.4909 12.2779C38.5014 12.2779 37.5511 12.5276 36.6402 13.0269C35.7293 13.5263 34.9298 14.2306 34.2483 15.1397C33.5668 16.0488 33.0687 17.0796 32.7476 18.2385C32.4331 19.4037 32.3675 20.4217 32.5576 21.3052C32.7542 22.1951 33.167 22.8738 33.8027 23.3475C34.4449 23.8277 35.2641 24.0646 36.2667 24.0646C37.0634 24.0685 37.8512 23.9002 38.5735 23.5716C39.2876 23.2569 39.9227 22.7937 40.4346 22.2143L39.9759 23.8892H43.377L46.4826 12.5717H43.0749L43.0651 12.566ZM58.7044 12.566H48.8136L48.1222 15.0885H53.8773L46.269 21.5101L45.6189 23.8789H55.8288L56.5202 21.3564H50.3536L58.0786 14.8388L58.7044 12.566ZM67.4104 18.168C67.1044 19.282 66.6503 20.1195 66.0506 20.6649C65.451 21.2155 64.7249 21.4908 63.8723 21.4908C62.0898 21.4908 61.504 20.3832 62.1121 18.168C62.4136 17.0668 62.8697 16.239 63.4791 15.6814C64.0886 15.1218 64.8271 14.8426 65.6954 14.8426C66.5474 14.8426 67.1227 15.1199 67.4189 15.6781C67.7152 16.2352 67.7125 17.0655 67.4104 18.1667V18.168ZM69.4013 12.9917C68.6182 12.5154 67.6188 12.2772 66.3999 12.2772C65.1659 12.2772 64.0237 12.5141 62.9726 12.9879C61.9258 13.4587 61.0058 14.1615 60.2857 15.0405C59.5452 15.9304 59.0124 16.974 58.6854 18.1648C58.3643 19.3512 58.325 20.3928 58.574 21.2847C58.823 22.1746 59.3473 22.8597 60.1337 23.3334C60.9266 23.8111 61.9358 24.0486 63.1744 24.0486C64.3933 24.0486 65.527 23.8091 66.569 23.3328C67.611 22.8539 68.5022 22.174 69.2427 21.2776C69.9832 20.3852 70.514 19.3441 70.8417 18.1533C71.1694 16.9625 71.2087 15.9227 70.9597 15.029C70.7107 14.139 70.1929 13.454 69.4131 12.977L69.4013 12.9917ZM81.5432 15.5892L82.4148 12.5096C82.1199 12.3624 81.7332 12.2855 81.2483 12.2855C80.4685 12.2855 79.7214 12.4738 79.0005 12.8554C78.3806 13.1793 77.8537 13.6364 77.4081 14.2088L77.8603 12.5506L76.8727 12.5544H74.448L71.3221 23.8674H74.771L76.393 17.9535C76.6289 17.0937 77.0535 16.417 77.6663 15.9368C78.2757 15.4547 79.0359 15.2133 79.9534 15.2133C80.5169 15.2133 81.0412 15.3395 81.5393 15.5911L81.5432 15.5892ZM91.1398 18.2224C90.8449 19.2788 90.3993 20.0855 89.7898 20.6425C89.1804 21.2021 88.4464 21.4812 87.5945 21.4812C86.7425 21.4812 86.1593 21.1995 85.8513 20.6361C85.5367 20.0695 85.5302 19.2532 85.8251 18.1802C86.12 17.1078 86.5722 16.2851 87.1947 15.7153C87.8173 15.141 88.5512 14.8542 89.4032 14.8542C90.242 14.8542 90.8056 15.1487 91.107 15.7441C91.4085 16.3395 91.415 17.1654 91.1254 18.2218L91.1398 18.2224ZM93.537 13.0103C92.898 12.5109 92.0821 12.2612 91.0926 12.2612C90.2256 12.2612 89.3992 12.4533 88.6155 12.8413C87.8324 13.2286 87.1967 13.7568 86.7085 14.4252L86.7203 14.3484L87.2989 12.5493H83.9305L83.0721 15.6801L83.0458 15.7889L79.5071 28.6858H82.9607L84.7431 22.1938C84.9201 22.7713 85.2805 23.2246 85.831 23.5524C86.3815 23.8789 87.061 24.0409 87.869 24.0409C88.8717 24.0409 89.8285 23.804 90.7361 23.3302C91.647 22.8552 92.4334 22.1714 93.1018 21.2879C93.7703 20.4044 94.2663 19.38 94.5829 18.2212C94.904 17.0604 94.9695 16.0252 94.786 15.1192C94.5992 14.212 94.1857 13.5097 93.5474 13.0128L93.537 13.0103ZM104.993 18.1763C104.698 19.2455 104.246 20.065 103.636 20.6284C103.027 21.1957 102.293 21.478 101.441 21.478C100.569 21.478 99.9795 21.2027 99.6715 20.6457C99.3569 20.0887 99.3504 19.282 99.6387 18.2256C99.927 17.1693 100.387 16.3434 101.023 15.7479C101.658 15.1525 102.402 14.8554 103.255 14.8554C104.107 14.8554 104.684 15.1436 104.986 15.7134C105.287 16.2851 105.289 17.1065 104.995 18.1783L104.993 18.1763ZM106.533 12.5519L106.092 14.1589C105.902 13.5795 105.535 13.1185 104.991 12.776C104.44 12.4341 103.765 12.2638 102.959 12.2638C101.97 12.2638 101.014 12.5135 100.102 13.0128C99.1911 13.5122 98.3916 14.2126 97.7101 15.1192C97.0285 16.0258 96.5305 17.0591 96.2094 18.218C95.8916 19.3813 95.8293 20.4012 96.0193 21.2885C96.2113 22.1721 96.6249 22.8545 97.2645 23.3309C97.9027 23.8047 98.7258 24.0441 99.7285 24.0441C100.535 24.0441 101.305 23.8802 102.035 23.5511C102.748 23.235 103.381 22.7712 103.892 22.1919L103.433 23.868H106.834L109.939 12.5551H106.538L106.533 12.5519ZM124.218 12.5557L124.22 12.5525H122.129C122.063 12.5525 122.004 12.5557 121.943 12.557H120.858L120.301 13.3125L120.164 13.4917L120.105 13.5814L115.697 19.5791L114.787 12.5557H111.177L113.005 23.2284L108.969 28.6897H112.566L113.543 27.3368C113.57 27.2971 113.595 27.2639 113.628 27.2216L114.768 25.6402L114.801 25.5954L119.908 18.5208L124.213 12.5666L124.22 12.5628H124.218V12.5557Z" fill="white"/></svg></div>
+    <div class="nav-links">
+      <a href="#summary">ICPs</a>
+      <a href="#insights">Insights</a>
+      <a href="#deep-dive">Deep Dive</a>
+      <a href="#quotes">Quote Wall</a>
+      <a href="#projects">Projects</a>
+      <a href="#methodology">Method</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <h1>Research Insights</h1>
+  <p class="subtitle">Who wants Razorpay Money, what they need to see before buying, and where the product should focus at launch.</p>
+</header>
+
+<!-- RESEARCH OVERVIEW (two columns under hero) -->
+<div class="research-overview fade-in">
+  <!-- Quant panel -->
+  <div class="ro-panel">
+    <div class="ro-label">Quantitative survey <span class="ro-badge">72 responses</span></div>
+    <div class="funnel-row">
+      <div class="funnel-step">
+        <div class="f-num">72</div>
+        <div class="f-label">Surveyed</div>
+        <div class="f-sub">Cleaned dataset</div>
+      </div>
+      <div class="funnel-step">
+        <div class="f-num">50</div>
+        <div class="f-label">Open to RM</div>
+        <div class="f-sub">20 Yes + 30 Not Sure</div>
+      </div>
+      <div class="funnel-step">
+        <div class="f-num">30</div>
+        <div class="f-label">Undecided</div>
+        <div class="f-sub">Blocked by brand uncertainty</div>
+      </div>
+      <div class="funnel-step">
+        <div class="f-num">18</div>
+        <div class="f-label">Pilot signups</div>
+        <div class="f-sub">25% conversion</div>
+      </div>
+    </div>
+  </div>
+  <!-- Qual panel -->
+  <div class="ro-panel qual-panel">
+    <div class="ro-label" style="justify-content:center;">Qualitative interviews <span class="ro-badge">7 interviews</span></div>
+    <div class="qual-big">7</div>
+    <div class="qual-label">in-depth interviews</div>
+    <div class="qual-note">
+      30-45 min each &middot; past behavior focused
+      <div class="tooltip">
+        We recruited only users who have purchased a gift card recently for qualitative interviews. This means the GC Newcomer segment (19 of 72 in quant) has zero qual depth — a known research gap.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><hr></div>
+
+<!-- ICPs -->
+<section id="summary">
+  <div class="section-label">Who we found</div>
+  <div class="section-title">Three ICPs, One Non-Target</div>
+  <p class="section-subtitle">Personas identified through qualitative interviews and sized with quantitative survey proxies.</p>
+
+  <div class="icp-grid">
+
+    <!-- ALCHEMIST -->
+    <div class="icp-card alchemist fade-in">
+      <div class="icp-top">
+        <div class="icp-tag">ICP 1</div>
+        <h3>The Points Alchemist</h3>
+        <ul class="icp-bullets">
+          <li>Converts CC reward points to GCs as a monthly/quarterly habit</li>
+          <li>Manages 3-6 credit cards optimized by category (fuel, dining, travel, UPI)</li>
+          <li>Treats GCs as a financial instrument, not a shopping decision</li>
+          <li>Not discount hunters — convenience and quality trump 5% savings</li>
+        </ul>
+        <div class="voice-label">How they think</div>
+        <div class="voice-quote">"I want diversified brands across categories where I impulse shop — watches, shoes, skincare, electronics."</div>
+      </div>
+      <div class="icp-accordion-toggle" onclick="this.closest('.icp-card').classList.toggle('open')">
+        <span>Evidence, positioning & signals</span>
+        <span class="icp-chev">&#9662;</span>
+      </div>
+      <div class="icp-accordion">
+        <div class="icp-accordion-inner">
+          <div class="icp-stats-row" style="margin-top:1rem;">
+            <div class="icp-stat"><div class="s-num">47%</div><div class="s-label">Signup rate</div></div>
+            <div class="icp-stat"><div class="s-num">26</div><div class="s-label">of 72 quant</div></div>
+            <div class="icp-stat"><div class="s-num">3</div><div class="s-label">of 7 qual</div></div>
+          </div>
+          <div class="acc-section">
+            <h4>Positioning</h4>
+            <ul class="icp-bullets">
+              <li>Lead with Shopping Voucher — they want to shop directly, not more conversion steps</li>
+              <li>Acquire via CC rewards ecosystem (banking apps, reward portals)</li>
+              <li>Brand quality is the convincer — breadth + depth across impulse categories</li>
+              <li>Don't lead with discount — lead with "better than Amazon GC" (more brands, same ease)</li>
+            </ul>
+          </div>
+          <div class="acc-section">
+            <h4>Identifying signals</h4>
+            <ul class="icp-bullets">
+              <li>"Use or earn bank rewards/points" as GC purchase reason</li>
+              <li>High GC frequency (3+ per year)</li>
+              <li>Benchmarks RM against Gyftr, Amazon Pay, Smartbuy</li>
+            </ul>
+          </div>
+          <div class="blocker-label">What could stop them</div>
+          <div class="blocker-quote">"Added friction of exploring different websites is a drop-off point."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MIGRATOR -->
+    <div class="icp-card migrator fade-in">
+      <div class="icp-top">
+        <div class="icp-tag">ICP 2</div>
+        <h3>The Marketplace Migrator</h3>
+        <ul class="icp-bullets">
+          <li>Shops 80-90% on Amazon/Blinkit — D2C is unfamiliar territory</li>
+          <li>Buys GCs occasionally for weddings, festivals, one-off self-use</li>
+          <li>Understands GCs but only trusts Amazon for them</li>
+          <li>Not exploratory — sticks to familiar platforms and brands</li>
+        </ul>
+        <div class="voice-label">How they think</div>
+        <div class="voice-quote">"I don't have time and patience to understand a new website. Order tracking and notifications are much better on Amazon."</div>
+      </div>
+      <div class="icp-accordion-toggle" onclick="this.closest('.icp-card').classList.toggle('open')">
+        <span>Evidence, positioning & signals</span>
+        <span class="icp-chev">&#9662;</span>
+      </div>
+      <div class="icp-accordion">
+        <div class="icp-accordion-inner">
+          <div class="icp-stats-row" style="margin-top:1rem;">
+            <div class="icp-stat"><div class="s-num">33%</div><div class="s-label">Signup rate</div></div>
+            <div class="icp-stat"><div class="s-num">27</div><div class="s-label">of 72 quant</div></div>
+            <div class="icp-stat"><div class="s-num">2</div><div class="s-label">of 7 qual</div></div>
+          </div>
+          <div class="acc-section">
+            <h4>Positioning</h4>
+            <ul class="icp-bullets">
+              <li>Lead with familiar brand logos — Nike, PharmEasy, Tata Chroma, BookMyShow</li>
+              <li>Wallet-first flow: park money, use later when ready</li>
+              <li>Razorpay checkout as trust bridge (they already know it from payments)</li>
+              <li>Heavy social proof: "10,000+ users," testimonials, money-back guarantee</li>
+            </ul>
+          </div>
+          <div class="acc-section">
+            <h4>Identifying signals</h4>
+            <ul class="icp-bullets">
+              <li>Active GC buyer who has never tried niche brand GCs</li>
+              <li>"Don't shop at niche brands" as top barrier</li>
+              <li>Needs to see familiar brand logos before any purchase decision</li>
+            </ul>
+          </div>
+          <div class="blocker-label">What could stop them</div>
+          <div class="blocker-quote">"What if these 500 brands are very new? What if I don't know them? I would not buy Razorpay Money."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEWCOMER -->
+    <div class="icp-card newcomer fade-in">
+      <div class="icp-top">
+        <div class="icp-tag">ICP 3</div>
+        <h3>The GC Newcomer</h3>
+        <ul class="icp-bullets">
+          <li>Never bought a gift card — defaults to cash/UPI for everything</li>
+          <li>No existing GC mental model — blank slate (challenge + opportunity)</li>
+          <li>Strongest Shopping Voucher preference of any segment (~7 in 10)</li>
+          <li>Avoidance reasons scattered: "impersonal," "never thought about it," "might expire"</li>
+        </ul>
+        <div class="voice-label">How they think</div>
+        <div class="voice-quote" style="color:var(--text-tertiary); font-style:normal;">No direct qual quotes — all 7 interviewees were existing GC buyers. This is the next research priority.</div>
+      </div>
+      <div class="icp-accordion-toggle" onclick="this.closest('.icp-card').classList.toggle('open')">
+        <span>Evidence, positioning & signals</span>
+        <span class="icp-chev">&#9662;</span>
+      </div>
+      <div class="icp-accordion">
+        <div class="icp-accordion-inner">
+          <div class="icp-stats-row" style="margin-top:1rem;">
+            <div class="icp-stat"><div class="s-num">23%</div><div class="s-label">Signup rate</div></div>
+            <div class="icp-stat"><div class="s-num">19</div><div class="s-label">of 72 quant</div></div>
+            <div class="icp-stat"><div class="s-num">0</div><div class="s-label">of 7 qual</div></div>
+          </div>
+          <div class="acc-section">
+            <h4>Positioning</h4>
+            <ul class="icp-bullets">
+              <li>Avoid "gift card" language — use "shopping voucher"</li>
+              <li>Position as a new category, not a GC evolution</li>
+              <li>"Like cash, but 10% smarter" for cash/UPI-preferred subset</li>
+              <li>Needs segmented messaging — one pitch won't fit all sub-groups</li>
+            </ul>
+          </div>
+          <div class="acc-section">
+            <h4>Identifying signals</h4>
+            <ul class="icp-bullets">
+              <li>Never bought a GC but didn't reject RM outright</li>
+              <li>"Cash/UPI is simpler" or "never thought about it"</li>
+            </ul>
+          </div>
+          <div class="blocker-label">Research gap</div>
+          <div class="blocker-quote" style="background:rgba(251,191,36,.04); border-color:rgba(251,191,36,.12); color:var(--moderate);">Zero qual depth on this segment. We have quant signals on size and flow preference, but no behavioral depth on what would convert them.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTLED -->
+    <div class="icp-card settled fade-in">
+      <div class="icp-top">
+        <div class="icp-tag">Non-target</div>
+        <h3>The Settled Shopper</h3>
+        <ul class="icp-bullets">
+          <li>RM adds a step, not removes one — they already know where to shop</li>
+          <li>Some are offline-first with vendor relationships</li>
+          <li>Some simply don't shop at niche brands</li>
+          <li>Structural objections — not solvable with better UX or trust signals</li>
+        </ul>
+        <div class="voice-label">How they think</div>
+        <div class="voice-quote">"When I buy for myself, I know where to shop. I have my own vendors."</div>
+      </div>
+      <div class="icp-accordion-toggle" onclick="this.closest('.icp-card').classList.toggle('open')">
+        <span>Evidence, rejection reasons & recommendation</span>
+        <span class="icp-chev">&#9662;</span>
+      </div>
+      <div class="icp-accordion">
+        <div class="icp-accordion-inner">
+          <div class="icp-stats-row">
+            <div class="icp-stat"><div class="s-num">0</div><div class="s-label">Signups</div></div>
+            <div class="icp-stat"><div class="s-num">22</div><div class="s-label">Rejected RM</div></div>
+            <div class="icp-stat"><div class="s-num">1</div><div class="s-label">of 7 qual</div></div>
+          </div>
+          <div class="acc-section">
+            <h4>Rejection breakdown</h4>
+            <ul class="icp-bullets">
+              <li>"Would rather pay directly at a brand I like" (41%)</li>
+              <li>"Don't shop at new age / niche brands" (27%)</li>
+              <li>"Low discount" (18%)</li>
+            </ul>
+          </div>
+          <div class="acc-section">
+            <h4>Recommendation</h4>
+            <p>Don't pursue. ~1 in 3 respondents fall here. Accept this as the ceiling of the addressable market.</p>
+          </div>
+          <div class="blocker-label">What they say</div>
+          <div class="blocker-quote">"Why would I come to Razorpay to buy Amazon?"</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- SEVEN INSIGHTS -->
+<section id="insights">
+  <div class="section-label">What we learned</div>
+  <div class="section-title">Seven Insights</div>
+  <p class="section-subtitle">Click any insight to expand the evidence. Confidence levels reflect qual-quant alignment.</p>
+
+  <div class="insight fade-in">
+    <div class="insight-summary" onclick="this.parentElement.classList.toggle('open')">
+      <div class="insight-left">
+        <div class="insight-top-row"><span class="insight-number">Insight 01</span><span class="confidence-badge high">High<span class="badge-tip">Qual: 6 of 6 assumed auto-apply at checkout</span></span></div>
+        <h3>Users expect checkout "magic" — seamless checkout is table stakes</h3>
+        <div class="insight-action"><strong>Action &rarr;</strong> Auto-detect RM balance at Razorpay checkout, one-click apply, zero codes. If this doesn't work on day one, nothing else matters.</div>
+      </div>
+      <div class="insight-chevron">&#9662;</div>
+    </div>
+    <div class="insight-detail"><div class="insight-detail-inner">
+      <div class="evidence-line">Qual: 6 of 6 assumed auto-apply at checkout</div>
+      <p class="insight-body">Every single interviewee assumed RM would work like a wallet — balance appears at Razorpay checkout, one-click apply, no codes. Nobody described a flow involving manual codes, copy-paste, or any extra steps. This isn't a feature to market — it's infrastructure to guarantee on day one. If checkout requires manual steps, all three ICPs lose trust immediately.</p>
+      <div class="inline-quote">Everyone expects it to work like magic — just go to website, shop, Razorpay Money will be there at checkout.</div>
+    </div></div>
+  </div>
+
+  <div class="insight fade-in">
+    <div class="insight-summary" onclick="this.parentElement.classList.toggle('open')">
+      <div class="insight-left">
+        <div class="insight-top-row"><span class="insight-number">Insight 02</span><span class="confidence-badge high">High<span class="badge-tip">Qual: 5 of 6 preferred Shopping · Quant: 28 chose Shopping vs 9 Exchange</span></span></div>
+        <h3>Overwhelming preference for Shopping Voucher — launch with it alone</h3>
+        <div class="insight-action"><strong>Action &rarr;</strong> Build Exchange later if demand emerges. Don't split focus at launch.</div>
+      </div>
+      <div class="insight-chevron">&#9662;</div>
+    </div>
+    <div class="insight-detail"><div class="insight-detail-inner">
+      <div class="evidence-line">Qual: 5 of 6 preferred Shopping &middot; Quant: 28 chose Shopping vs 9 Exchange</div>
+      <p class="insight-body">Shopping Voucher wins across every segment. Zero interviewees chose Exchange cleanly when the concept was explained. Even rewards-driven users who already convert CC points to GCs prefer shopping directly rather than adding another conversion step. Exchange was misunderstood even with interviewer guidance — in a self-serve product, confusion will be higher.</p>
+      <div class="inline-quote">I can get more value if I pay with credit card directly vs buying GC then using GC.</div>
+    </div></div>
+  </div>
+
+  <div class="insight fade-in">
+    <div class="insight-summary" onclick="this.parentElement.classList.toggle('open')">
+      <div class="insight-left">
+        <div class="insight-top-row"><span class="insight-number">Insight 03</span><span class="confidence-badge high">High<span class="badge-tip">Qual: 6 of 6 conditioned interest on brands · Quant: 10 of 13 undecided blocked by brand uncertainty</span></span></div>
+        <h3>Brand visibility before purchase is non-negotiable — what to show differs by ICP</h3>
+        <div class="insight-action"><strong>Action &rarr;</strong> Landing page must lead with recognizable brand logos, not discount messaging. Tailor brand showcase by ICP segment.</div>
+      </div>
+      <div class="insight-chevron">&#9662;</div>
+    </div>
+    <div class="insight-detail"><div class="insight-detail-inner">
+      <div class="evidence-line">Qual: 6 of 6 conditioned interest on brands &middot; Quant: 10 of 13 undecided blocked by "don't shop at niche brands"</div>
+      <p class="insight-body">Every interviewee conditioned their interest on seeing brands first. But what they need to <em>see</em> is different:</p>
+      <table class="brand-table"><thead><tr><th>ICP</th><th>What they need</th><th>Categories</th><th>Brands named</th></tr></thead><tbody>
+        <tr><td class="icp-cell" style="color:var(--alchemist)">Points Alchemist</td><td>Breadth across impulse categories. D2C + established.</td><td>Electronics, fashion, fitness, food, grooming</td><td>Sony, Samsung, Apple, Adidas, Zara, H&M, Nykaa, Davidoff</td></tr>
+        <tr><td class="icp-cell" style="color:var(--migrator)">Marketplace Migrator</td><td>Familiar everyday brands. NOT D2C.</td><td>Essentials, groceries, medicine, entertainment</td><td>Nike, Tata Chroma, PharmEasy, BookMyShow, Swiggy</td></tr>
+        <tr><td class="icp-cell" style="color:var(--newcomer)">GC Newcomer</td><td colspan="3" style="font-style:italic;color:var(--text-tertiary);">No qual data — research gap.</td></tr>
+      </tbody></table>
+      <div class="inline-quote">What if these 500 brands are very new? What if I don't know them? I would not buy Razorpay Money.</div>
+      <p class="insight-body">The undecided middle (30 of 72) is blocked primarily by brand uncertainty. Showing 5-6 familiar logos upfront is the highest-leverage conversion intervention.</p>
+    </div></div>
+  </div>
+
+  <div class="insight fade-in">
+    <div class="insight-summary" onclick="this.parentElement.classList.toggle('open')">
+      <div class="insight-left">
+        <div class="insight-top-row"><span class="insight-number">Insight 04</span><span class="confidence-badge high">High<span class="badge-tip">Qual: 3 of 7 raised explicitly · Strongest from Marketplace Migrators</span></span></div>
+        <h3>Razorpay is trusted for payments — but not for shopping, delivery, or returns</h3>
+        <div class="insight-action"><strong>Action &rarr;</strong> Consider easy refunds back to RM wallet. If a D2C order goes wrong, recovering RM balance (vs fighting a small brand's customer service) could bridge the Amazon trust gap.</div>
+      </div>
+      <div class="insight-chevron">&#9662;</div>
+    </div>
+    <div class="insight-detail"><div class="insight-detail-inner">
+      <div class="evidence-line">Qual: 3 of 7 raised explicitly &middot; Strongest from Marketplace Migrators</div>
+      <p class="insight-body">Users trust Razorpay for payments — they see it at checkout everywhere. But payments trust doesn't transfer to shopping trust. Delivery, returns, and refunds are different kinds of trust, and the product currently solves only the first. Amazon's moat isn't price — it's the safety net of "I can always return it." RM checkout at a D2C brand provides payment certainty, not delivery certainty.</p>
+      <div class="inline-quote">I trust Amazon more than D2C brands. Order tracking and notifications are much better on Amazon.</div>
+      <div class="inline-quote">We can return it if we don't like it. Amazon makes sense, can always return.</div>
+    </div></div>
+  </div>
+
+  <div class="insight fade-in">
+    <div class="insight-summary" onclick="this.parentElement.classList.toggle('open')">
+      <div class="insight-left">
+        <div class="insight-top-row"><span class="insight-number">Insight 05</span><span class="confidence-badge high">High<span class="badge-tip">Qual: 6 of 6 found 5-10% acceptable, not compelling · Quant: only 4 of 22 rejecters cited "low discount"</span></span></div>
+        <h3>Flexibility and brand discovery drive RM interest — discount is just supporting proof</h3>
+        <div class="insight-action"><strong>Action &rarr;</strong> Lead with what each ICP values — brand quality for Alchemists, familiarity for Migrators, simplicity for Newcomers. Use 5-10% discount as reinforcement, not the headline.</div>
+      </div>
+      <div class="insight-chevron">&#9662;</div>
+    </div>
+    <div class="insight-detail"><div class="insight-detail-inner">
+      <div class="evidence-line">Qual: 6 of 6 found 5-10% acceptable, not compelling &middot; Quant: only 4 of 22 rejecters cited "low discount"</div>
+      <p class="insight-body">Users are drawn to RM for the ability to shop across 500+ brands with one balance — the flexibility and discovery of new brands is what excites them. The 5-10% discount is acceptable (below 5% feels trivial, above 20% triggers quality suspicion), but it's never the <em>reason</em> someone chooses RM. Among rejecters, "would rather pay directly" (9 of 22) and "don't shop at niche brands" (6 of 22) are far larger objections than "low discount" (4 of 22). The brand proposition is losing people, not the discount.</p>
+      <div class="inline-quote">D2C checkout is more seamless, and I discover new brands.</div>
+      <div class="inline-quote">Keep new ones in trend AND old stable ones.</div>
+    </div></div>
+  </div>
+
+  <div class="insight fade-in">
+    <div class="insight-summary" onclick="this.parentElement.classList.toggle('open')">
+      <div class="insight-left">
+        <div class="insight-top-row"><span class="insight-number">Insight 06</span><span class="confidence-badge moderate-high">Moderate-High<span class="badge-tip">Qual: 4 of 6 had gifting as primary use · Quant: gifters convert at similar rates within each ICP</span></span></div>
+        <h3>Gifting behaviors are distributed across all ICPs — it's a use case, not a persona</h3>
+        <div class="insight-action"><strong>Action &rarr;</strong> Build gifting flow (recipient email, personal message, scheduled delivery) as P0. Corporate bulk gifting is a separate B2B opportunity.</div>
+      </div>
+      <div class="insight-chevron">&#9662;</div>
+    </div>
+    <div class="insight-detail"><div class="insight-detail-inner">
+      <div class="evidence-line">Qual: 4 of 6 had gifting as primary use &middot; Quant: gifters convert at similar rates within each ICP</div>
+      <p class="insight-body">The original research treated gifters as a distinct low-converting segment (8% conversion). The data doesn't support that. When re-clustered by behavior, gifters appear across all three ICPs and convert at the same rate as self-use buyers within each segment. Gifting is a distribution channel: a Points Alchemist who gifts RM to 40 employees puts RM in 40 new hands. Self-use follows gifting, not the other way around.</p>
+      <div class="inline-quote">Provides flexibility — team doesn't have to figure out how to use it.</div>
+      <div class="inline-quote">Easy to send online via email — don't have to send it myself.</div>
+    </div></div>
+  </div>
+
+  <div class="insight fade-in">
+    <div class="insight-summary" onclick="this.parentElement.classList.toggle('open')">
+      <div class="insight-left">
+        <div class="insight-top-row"><span class="insight-number">Insight 07</span><span class="confidence-badge moderate">Moderate<span class="badge-tip">Qual: 3 of 7 habitual GC buyers showed strong interest · Quant: directional from niche experience data</span></span></div>
+        <h3>Past niche GC experience predicts conversion better than GC habit alone</h3>
+        <div class="insight-action"><strong>Action &rarr;</strong> First redemption is make-or-break. Launch with brands that have strong inventory and seamless checkout. A bad first transaction means permanent churn.</div>
+      </div>
+      <div class="insight-chevron">&#9662;</div>
+    </div>
+    <div class="insight-detail"><div class="insight-detail-inner">
+      <div class="evidence-line">Qual: 3 of 7 habitual GC buyers showed strong interest &middot; Quant: directional from niche experience data</div>
+      <p class="insight-body">Points Alchemists (habitual GC buyers via CC rewards) convert strongest — 9 of 19 signed up (47%). But across all segments, past niche brand GC experience quality is the strongest single predictor. Respondents who tried niche brand GCs and had "no issues" show strong RM interest. Those who had "limited products/options" show near-zero interest. Same population, opposite outcomes — driven entirely by whether their last niche GC experience was good or bad.</p>
+      <div class="inline-quote">Added friction of exploring different websites is a drop-off point.</div>
+    </div></div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ICP DEEP DIVE -->
+<section id="deep-dive">
+  <div class="section-label">Going deeper</div>
+  <div class="section-title">ICP Deep Dive</div>
+  <p class="section-subtitle">Full behavioral profiles, brand requirements, and positioning guidance.</p>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="alchemist-tab">Points Alchemist</button>
+    <button class="tab-btn" data-tab="migrator-tab">Marketplace Migrator</button>
+    <button class="tab-btn" data-tab="newcomer-tab">GC Newcomer</button>
+    <button class="tab-btn" data-tab="settled-tab">Settled Shopper</button>
+  </div>
+  <div class="tab-content active" id="alchemist-tab"><div class="deep-dive-card">
+    <h3 style="color:var(--alchemist);">The Points Alchemist</h3>
+    <p class="dd-tagline">Turns reward points into real value — monthly, systematically, across 3-6 credit cards.</p>
+    <div class="dd-section"><h4>Behaviors</h4><ul class="icp-bullets">
+      <li>Buy GCs regularly via CC reward points as a monthly/quarterly habit</li>
+      <li>Manage 3-6 credit cards optimized by category (fuel, dining, travel, UPI)</li>
+      <li>Treat GCs as a financial instrument, not a shopping decision</li>
+      <li>Not discount hunters — convenience and quality trump 5%</li>
+      <li>Some explore D2C via Instagram; others are brand-conservative but financially active</li>
+      <li>Benchmark RM against Gyftr, Amazon Pay, Smartbuy</li>
+    </ul></div>
+    <div class="dd-section"><h4>Brand Requirements</h4><ul class="icp-bullets">
+      <li>Want breadth + depth — mix of trending D2C AND stable established brands</li>
+      <li>Specific brands named: Sony, Philips, Samsung, Apple, Adidas, Zara, H&M, Nykaa</li>
+      <li>Also: MyFitness, Muscle Blaze, Davidoff, Daily Objects, Pilgrim</li>
+    </ul></div>
+    <div class="dd-section"><h4>Positioning</h4><ul class="icp-bullets">
+      <li>Lead with Shopping Voucher</li>
+      <li>Acquire via CC rewards ecosystem (banking apps, reward portals)</li>
+      <li>Brand quality is the convincer — don't lead with discount</li>
+      <li>Lead with "better than Amazon GC" (more brands, same ease)</li>
+    </ul></div>
+    <div class="risk-box"><strong>Key risk:</strong> People with fully optimized rewards stacks may see RM as redundant rather than better.</div>
+  </div></div>
+  <div class="tab-content" id="migrator-tab"><div class="deep-dive-card">
+    <h3 style="color:var(--migrator);">The Marketplace Migrator</h3>
+    <p class="dd-tagline">Shops 80-90% on Amazon. D2C is unfamiliar territory. Needs familiar logos to feel safe.</p>
+    <div class="dd-section"><h4>Behaviors</h4><ul class="icp-bullets">
+      <li>Buy GCs occasionally — weddings, family occasions, one-off self-use</li>
+      <li>Shop 80-90% on Amazon/Blinkit — transactional relationship with GCs</li>
+      <li>Need arises, buy Amazon GC, done — not exploratory</li>
+    </ul></div>
+    <div class="dd-section"><h4>Brand Requirements</h4><ul class="icp-bullets">
+      <li>Want familiar everyday brands ONLY — NOT emerging D2C</li>
+      <li>Specific: Nike, Adidas, Reliance stores, Tata Chroma, PharmEasy</li>
+      <li>Also: MedPlus, BookMyShow, Cleartrip, Swiggy</li>
+    </ul></div>
+    <div class="dd-section"><h4>Positioning</h4><ul class="icp-bullets">
+      <li>Lead with familiar brand logos on landing page</li>
+      <li>Wallet-first flow: park money, use later</li>
+      <li>Razorpay checkout as trust bridge</li>
+      <li>Heavy social proof: "10,000+ users," testimonials, money-back guarantee</li>
+    </ul></div>
+    <div class="risk-box"><strong>Key risk:</strong> If launch catalog skews too niche/D2C, this segment bounces immediately.</div>
+  </div></div>
+  <div class="tab-content" id="newcomer-tab"><div class="deep-dive-card">
+    <h3 style="color:var(--newcomer);">The GC Newcomer</h3>
+    <p class="dd-tagline">Never bought a gift card. Blank slate — no baggage, but also no mental model.</p>
+    <div class="dd-section"><h4>Behaviors</h4><ul class="icp-bullets">
+      <li>Default to cash/UPI for everything</li>
+      <li>No existing GC mental model</li>
+      <li>Avoidance reasons scattered: "impersonal," "never thought about it," "might expire," "cash is simpler"</li>
+    </ul></div>
+    <div class="dd-section"><h4>Positioning</h4><ul class="icp-bullets">
+      <li>Avoid "gift card" language — use "shopping voucher"</li>
+      <li>Position as a new category: "Like cash, but 10% smarter"</li>
+      <li>Needs segmented messaging by sub-motivation</li>
+    </ul></div>
+    <div class="dd-section"><h4>Research Gap</h4><p style="font-style:italic;color:var(--text-tertiary);">Zero qual depth — all 7 interviewees were existing GC buyers. Next research priority.</p></div>
+    <div class="risk-box"><strong>Key risk:</strong> Diverse sub-motivations + least evidence = hardest segment to message.</div>
+  </div></div>
+  <div class="tab-content" id="settled-tab"><div class="deep-dive-card">
+    <h3 style="color:var(--settled);">The Settled Shopper</h3>
+    <p class="dd-tagline">Has decided how they shop and doesn't want an intermediary.</p>
+    <div class="dd-section"><h4>Why they reject RM</h4><ul class="icp-bullets">
+      <li>"Would rather pay directly at a brand I like" (41%)</li>
+      <li>"Don't shop at new age / niche brands" (27%)</li>
+      <li>"Low discount" (18%)</li>
+      <li>Structural objections — not solvable with better UX or trust signals</li>
+    </ul></div>
+    <div class="dd-section"><h4>Recommendation</h4><ul class="icp-bullets">
+      <li>Don't pursue — ~1 in 3 respondents fall here</li>
+      <li>Accept as the addressable market ceiling</li>
+    </ul></div>
+  </div></div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- QUOTE WALL -->
+<section id="quotes">
+  <div class="section-label">In their words</div>
+  <div class="section-title">Quote Wall</div>
+  <p class="section-subtitle">Direct quotes from qualitative interviews, anonymized. Filter by persona or theme.</p>
+  <div class="filter-chips">
+    <button class="chip active" data-filter="all">All quotes</button>
+    <button class="chip" data-filter="alchemist">Points Alchemist</button>
+    <button class="chip" data-filter="migrator">Marketplace Migrator</button>
+    <button class="chip" data-filter="settled">Settled Shopper</button>
+    <button class="chip" data-filter="brands">Brands</button>
+    <button class="chip" data-filter="trust">Trust</button>
+    <button class="chip" data-filter="checkout">Checkout</button>
+    <button class="chip" data-filter="discount">Discount</button>
+    <button class="chip" data-filter="gifting">Gifting</button>
+  </div>
+  <div class="quote-grid" id="quoteGrid">
+    <div class="quote-card" data-tags="migrator brands trust"><div class="quote-mark">&ldquo;</div><p class="quote-text">What if these 500 brands are very new? What if I don't know them? I would not buy Razorpay Money.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator</span><div class="quote-tags"><span class="qt migrator">Migrator</span><span class="qt insight-tag">Brands</span></div></div></div>
+    <div class="quote-card" data-tags="migrator trust"><div class="quote-mark">&ldquo;</div><p class="quote-text">I trust Amazon more than D2C brands. Order tracking and notifications are much better on Amazon.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator</span><div class="quote-tags"><span class="qt migrator">Migrator</span><span class="qt insight-tag">Trust</span></div></div></div>
+    <div class="quote-card" data-tags="migrator trust"><div class="quote-mark">&ldquo;</div><p class="quote-text">Compared to Amazon/Flipkart, Razorpay doesn't have as much trust as these larger brands.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator</span><div class="quote-tags"><span class="qt migrator">Migrator</span><span class="qt insight-tag">Trust</span></div></div></div>
+    <div class="quote-card" data-tags="alchemist brands"><div class="quote-mark">&ldquo;</div><p class="quote-text">I would use if I knew which brands are there. Brands need to be diverse across categories where I impulse shop.</p><div class="quote-meta"><span class="quote-source">Points Alchemist</span><div class="quote-tags"><span class="qt alchemist">Alchemist</span><span class="qt insight-tag">Brands</span></div></div></div>
+    <div class="quote-card" data-tags="alchemist discount"><div class="quote-mark">&ldquo;</div><p class="quote-text">Don't keep discount more than 20%, otherwise it devalues the brand.</p><div class="quote-meta"><span class="quote-source">Points Alchemist</span><div class="quote-tags"><span class="qt alchemist">Alchemist</span><span class="qt insight-tag">Discount</span></div></div></div>
+    <div class="quote-card" data-tags="alchemist discount"><div class="quote-mark">&ldquo;</div><p class="quote-text">Quality must justify price. I won't buy ₹60K just because luxury. If ₹30K has same quality, I'll buy that.</p><div class="quote-meta"><span class="quote-source">Points Alchemist</span><div class="quote-tags"><span class="qt alchemist">Alchemist</span><span class="qt insight-tag">Discount</span></div></div></div>
+    <div class="quote-card" data-tags="alchemist gifting"><div class="quote-mark">&ldquo;</div><p class="quote-text">Provides flexibility — team doesn't have to figure out how to use it.</p><div class="quote-meta"><span class="quote-source">Points Alchemist &middot; Gifts to 40 employees</span><div class="quote-tags"><span class="qt alchemist">Alchemist</span><span class="qt insight-tag">Gifting</span></div></div></div>
+    <div class="quote-card" data-tags="alchemist checkout"><div class="quote-mark">&ldquo;</div><p class="quote-text">D2C checkout is more seamless, and I discover new brands.</p><div class="quote-meta"><span class="quote-source">Points Alchemist</span><div class="quote-tags"><span class="qt alchemist">Alchemist</span><span class="qt insight-tag">Checkout</span></div></div></div>
+    <div class="quote-card" data-tags="alchemist brands"><div class="quote-mark">&ldquo;</div><p class="quote-text">Keep new ones in trend AND old stable ones.</p><div class="quote-meta"><span class="quote-source">Points Alchemist &middot; On brand catalog</span><div class="quote-tags"><span class="qt alchemist">Alchemist</span><span class="qt insight-tag">Brands</span></div></div></div>
+    <div class="quote-card" data-tags="alchemist"><div class="quote-mark">&ldquo;</div><p class="quote-text">Added friction of exploring different websites is a drop-off point.</p><div class="quote-meta"><span class="quote-source">Points Alchemist</span><div class="quote-tags"><span class="qt alchemist">Alchemist</span></div></div></div>
+    <div class="quote-card" data-tags="migrator brands"><div class="quote-mark">&ldquo;</div><p class="quote-text">Everyday, day-to-day brands I already know and purchase from.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator &middot; On what brands they need</span><div class="quote-tags"><span class="qt migrator">Migrator</span><span class="qt insight-tag">Brands</span></div></div></div>
+    <div class="quote-card" data-tags="migrator checkout"><div class="quote-mark">&ldquo;</div><p class="quote-text">Gift cards are generally used for later purchases only... I wouldn't want to directly jump into that website.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator &middot; On wallet-first flow</span><div class="quote-tags"><span class="qt migrator">Migrator</span><span class="qt insight-tag">Checkout</span></div></div></div>
+    <div class="quote-card" data-tags="migrator trust"><div class="quote-mark">&ldquo;</div><p class="quote-text">I don't have time and patience to understand a new website.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator</span><div class="quote-tags"><span class="qt migrator">Migrator</span><span class="qt insight-tag">Trust</span></div></div></div>
+    <div class="quote-card" data-tags="migrator trust"><div class="quote-mark">&ldquo;</div><p class="quote-text">We can return it if we don't like it. Amazon makes sense, can always return.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator</span><div class="quote-tags"><span class="qt migrator">Migrator</span><span class="qt insight-tag">Trust</span></div></div></div>
+    <div class="quote-card" data-tags="migrator gifting"><div class="quote-mark">&ldquo;</div><p class="quote-text">Easy to send online via email — don't have to send it myself.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator &middot; On gifting</span><div class="quote-tags"><span class="qt migrator">Migrator</span><span class="qt insight-tag">Gifting</span></div></div></div>
+    <div class="quote-card" data-tags="migrator"><div class="quote-mark">&ldquo;</div><p class="quote-text">Expiry dates too hard to remember, brands don't give reminders.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator</span><div class="quote-tags"><span class="qt migrator">Migrator</span></div></div></div>
+    <div class="quote-card" data-tags="migrator checkout"><div class="quote-mark">&ldquo;</div><p class="quote-text">Add it into my wallet, then use for any later purchases.</p><div class="quote-meta"><span class="quote-source">Marketplace Migrator &middot; On expected RM flow</span><div class="quote-tags"><span class="qt migrator">Migrator</span><span class="qt insight-tag">Checkout</span></div></div></div>
+    <div class="quote-card" data-tags="discount"><div class="quote-mark">&ldquo;</div><p class="quote-text">10% discount is ideal for first purchase to incentivize. Once regular user, okay with less.</p><div class="quote-meta"><span class="quote-source">Interviewee &middot; On discount structure</span><div class="quote-tags"><span class="qt insight-tag">Discount</span></div></div></div>
+    <div class="quote-card" data-tags="discount"><div class="quote-mark">&ldquo;</div><p class="quote-text">10% on ₹1,000 is very small. Need higher % for low order values.</p><div class="quote-meta"><span class="quote-source">Interviewee &middot; On discount sensitivity</span><div class="quote-tags"><span class="qt insight-tag">Discount</span></div></div></div>
+    <div class="quote-card" data-tags="settled"><div class="quote-mark">&ldquo;</div><p class="quote-text">When I buy for myself, I know where to shop. I have my own vendors.</p><div class="quote-meta"><span class="quote-source">Settled Shopper</span><div class="quote-tags"><span class="qt settled">Settled</span></div></div></div>
+    <div class="quote-card" data-tags="settled brands"><div class="quote-mark">&ldquo;</div><p class="quote-text">Why would I come to Razorpay to buy Amazon?</p><div class="quote-meta"><span class="quote-source">Settled Shopper &middot; On brand positioning</span><div class="quote-tags"><span class="qt settled">Settled</span><span class="qt insight-tag">Brands</span></div></div></div>
+    <div class="quote-card" data-tags="settled gifting discount"><div class="quote-mark">&ldquo;</div><p class="quote-text">In gifting you have decided I'm giving ₹5,000 gift. If you save some money + get flexibility, you make that trade-off.</p><div class="quote-meta"><span class="quote-source">Settled Shopper &middot; On gifting</span><div class="quote-tags"><span class="qt settled">Settled</span><span class="qt insight-tag">Gifting</span></div></div></div>
+    <div class="quote-card" data-tags="gifting"><div class="quote-mark">&ldquo;</div><p class="quote-text">You forget you have a gift card, hard to track expiry dates.</p><div class="quote-meta"><span class="quote-source">Interviewee &middot; On GC pain points</span><div class="quote-tags"><span class="qt insight-tag">Gifting</span></div></div></div>
+    <div class="quote-card" data-tags="alchemist checkout"><div class="quote-mark">&ldquo;</div><p class="quote-text">At checkout page, it should be working.</p><div class="quote-meta"><span class="quote-source">Points Alchemist</span><div class="quote-tags"><span class="qt alchemist">Alchemist</span><span class="qt insight-tag">Checkout</span></div></div></div>
+    <div class="quote-card" data-tags="trust"><div class="quote-mark">&ldquo;</div><p class="quote-text">How many people are using Razorpay Money?</p><div class="quote-meta"><span class="quote-source">Interviewee &middot; On social proof</span><div class="quote-tags"><span class="qt insight-tag">Trust</span></div></div></div>
+    <div class="quote-card" data-tags="alchemist"><div class="quote-mark">&ldquo;</div><p class="quote-text">I can get more value if I pay with credit card directly vs buying GC then using GC.</p><div class="quote-meta"><span class="quote-source">Points Alchemist &middot; On Exchange Voucher</span><div class="quote-tags"><span class="qt alchemist">Alchemist</span></div></div></div>
+  </div>
+</section>
+
+<!-- WHAT'S NEXT -->
+<div class="divider"><hr></div>
+<section id="projects">
+  <div class="section-label">What's next</div>
+  <div class="section-title">Projects We're Picking Up</div>
+  <p class="section-subtitle">Three initiatives directly informed by the research findings above.</p>
+
+  <div class="project-grid">
+    <div class="project-card fade-in">
+      <div class="project-num">Project 01</div>
+      <h3>Invisible wallet load on first use</h3>
+      <p class="project-hmw">Users expect RM balance to just appear at checkout — nobody imagines a separate "load wallet" step. We're redesigning the FTUX so the first wallet load happens silently from the GC delivery email, matching the mental model research uncovered.</p>
+      <span class="project-tag">Insight 01 — Checkout magic</span>
+    </div>
+    <div class="project-card fade-in">
+      <div class="project-num">Project 02</div>
+      <h3>Curated brand sections for discovery</h3>
+      <p class="project-hmw">Research shows our ICPs impulse-shop in specific categories — fashion, footwear, self-care, beauty &amp; wellness. We're building curated sections that surface the right brands to the right users, driving both discovery and redemption.</p>
+      <span class="project-tag">Insight 03 &amp; 05 — Brands &amp; discovery</span>
+    </div>
+    <div class="project-card fade-in">
+      <div class="project-num">Project 03</div>
+      <h3>ICP-driven positioning &amp; landing pages</h3>
+      <p class="project-hmw">Each ICP needs different trust signals and value messaging — Alchemists care about brand quality, Migrators need familiar logos, Newcomers need a new mental model. We're redesigning the landing page and positioning to speak to each segment.</p>
+      <span class="project-tag">Insight 03, 04 &amp; 05 — Trust &amp; positioning</span>
+    </div>
+  </div>
+</section>
+
+<!-- METHODOLOGY -->
+<footer class="methodology" id="methodology">
+  <div class="meth-inner">
+    <div class="section-label">How we got here</div>
+    <div class="section-title">Methodology</div>
+    <div class="meth-grid">
+      <div class="meth-item"><h4>Quantitative</h4><p>72 survey responses (cleaned). 18 email signups (25% conversion). Clustered by last GC purchase reason. Limitation: last purchase ≠ overall behavior. Sizing is directional.</p></div>
+      <div class="meth-item"><h4>Qualitative</h4><p>7 in-depth interviews (30-45 min). Focused on past behavior, not hypotheticals. All quotes anonymized. Recruited only recent GC buyers.</p></div>
+      <div class="meth-item"><h4>ICP Construction</h4><p>Anchored in qual behavioral patterns, sized with quant proxies. Qual and quant used different clustering axes — mapping is approximate.</p></div>
+    </div>
+    <div class="confidence-legend">
+      <div class="conf-item"><span class="conf-dot high"></span> High — Both sources agree</div>
+      <div class="conf-item"><span class="conf-dot mod-high"></span> Moderate-High — Strong qual, directional quant</div>
+      <div class="conf-item"><span class="conf-dot mod"></span> Moderate — One source clear, other directional</div>
+    </div>
+    <p style="margin-top:2rem;font-size:.8rem;color:var(--text-tertiary);">Razorpay Money Research &middot; March 2026 &middot; Analysis: April 2026</p>
+  </div>
+</footer>
+
+<script>
+  // Nav shadow
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 10));
+
+  // Active nav
+  const sections = document.querySelectorAll('section, footer.methodology');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id)); });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => obs.observe(s));
+
+  // Fade in
+  const fadeObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); fadeObs.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-in').forEach(el => fadeObs.observe(el));
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Quote filter
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const f = chip.dataset.filter;
+      document.querySelectorAll('.quote-card').forEach(c => { c.style.display = (f === 'all' || c.dataset.tags.includes(f)) ? '' : 'none'; });
+    });
+  });
+</script>
+</body>
+</html>
